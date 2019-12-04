@@ -62,13 +62,13 @@
     <mockito.version>1.9.0</mockito.version>
     <ognl.version>2.6.9</ognl.version>
     <serializer.version>2.7.1</serializer.version>
-    <sonar-jacoco-listeners.version>5.14.0.18788</sonar-jacoco-listeners.version>
     <slf4j.version>1.5.0</slf4j.version>
 
     <!-- Sonar -->
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
     <sonar.language>java</sonar.language>
+    <aggregate.report.dir>tests/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
   </properties>
   
   <build>
@@ -196,6 +196,11 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.5</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -354,9 +359,9 @@
         <version>${slf4j.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.sonarsource.java</groupId>
-        <artifactId>sonar-jacoco-listeners</artifactId>
-        <version>${sonar-jacoco-listeners.version}</version>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>3.7.0.1746</version>
       </dependency>
       <dependency>
         <groupId>xalan</groupId>
@@ -374,36 +379,17 @@
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.5</version>
             <executions>
               <execution>
-                <id>default-prepare-agent</id>
+                <id>prepare-agent</id>
                 <goals>
                   <goal>prepare-agent</goal>
-                </goals>
-                <configuration>
-                  <propertyName>surefireArgLine</propertyName>
-                  <append>true</append>
-                </configuration>
-              </execution>
-              <execution>
-                <id>default-report</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>report-aggregate</goal>
                 </goals>
               </execution>
             </executions>
           </plugin>
         </plugins>
       </build>
-      <dependencies>
-        <dependency>
-          <groupId>org.sonarsource.java</groupId>
-          <artifactId>sonar-jacoco-listeners</artifactId>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
     </profile>
     
     <profile>
