@@ -107,6 +107,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
           <configuration>
+            <argLine>${surefireArgLine}</argLine>
             <systemPropertyVariables>
               <log4j.configuration>file:${basedir}/../etc/log4j-maven.properties</log4j.configuration>
             </systemPropertyVariables>
@@ -384,6 +385,10 @@
                 <goals>
                   <goal>prepare-agent</goal>
                 </goals>
+                <configuration>
+                  <propertyName>surefireArgLine</propertyName>
+                  <append>true</append>
+                </configuration>
               </execution>
             </executions>
           </plugin>
