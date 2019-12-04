@@ -107,7 +107,6 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
           <configuration>
-            <argLine>${surefireArgLine}</argLine>
             <systemPropertyVariables>
               <log4j.configuration>file:${basedir}/../etc/log4j-maven.properties</log4j.configuration>
             </systemPropertyVariables>
@@ -202,6 +201,11 @@
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>0.8.5</version>
         </plugin>
+        <dependency>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>3.7.0.1746</version>
+        </dependency>
       </plugins>
     </pluginManagement>
   </build>
@@ -357,11 +361,6 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.sonarsource.scanner.maven</groupId>
-        <artifactId>sonar-maven-plugin</artifactId>
-        <version>3.7.0.1746</version>
       </dependency>
       <dependency>
         <groupId>xalan</groupId>
