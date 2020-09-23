@@ -20,6 +20,7 @@
     <module>morf-testsupport</module>
     <module>morf-excel</module>
     <module>morf-h2</module>
+    <module>morf-hsqldb</module>
     <module>morf-mysql</module>
     <module>morf-nuodb</module>
     <module>morf-oracle</module>
@@ -255,6 +256,11 @@
       <dependency>
         <groupId>org.alfasoftware</groupId>
         <artifactId>morf-h2</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.alfasoftware</groupId>
+        <artifactId>morf-hsqldb</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
