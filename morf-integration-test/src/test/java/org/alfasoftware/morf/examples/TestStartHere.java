@@ -91,7 +91,7 @@ public class TestStartHere {
 
     // And the database
     ConnectionResourcesBean connectionResources = new ConnectionResourcesBean();
-    connectionResources.setDatabaseType("H2");
+    connectionResources.setDatabaseType("HSQLDB");
     connectionResources.setHostName("localhost");
     connectionResources.setDatabaseName(TestStartHere.class.getName());
     connectionResources.setUserName("test");

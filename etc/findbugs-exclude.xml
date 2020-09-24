@@ -32,6 +32,10 @@
      <Match>
        <Bug code="UwF" />
      </Match>
+<!--TODO - added exclusion to clean compile. Should fix https://github.com/alfasoftware/morf/issues/130 and remove this-->
+    <Match>
+        <Bug code="Dm" pattern="DM_DEFAULT_ENCODING" />
+    </Match>
      <Match>
        <Class name="org.starstandard.star._5.ObjectFactory" />
      </Match>

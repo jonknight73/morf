@@ -88,7 +88,8 @@ public final class HSqlDB extends AbstractDatabaseType {
     // The MV_STORE is a flag that governs whether to use the new storage engine (defaulting to true as of H2 version 1.4, false in prior versions)
     //  Note that implementations of H2 prior to version 1.4.199 had an MVCC parameter used to allow higher concurrency.
     //  This configuration has been removed and the old "PageStore" implementation (MV_STORE=FALSE) is no longer supported.
-    builder.append(";DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE");
+  //TODO commented out H2 additional parameters
+   // builder.append(";DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE");
 
     return builder.toString();
   }

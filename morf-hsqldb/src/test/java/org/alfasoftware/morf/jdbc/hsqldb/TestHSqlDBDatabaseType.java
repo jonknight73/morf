@@ -45,6 +45,7 @@ public class TestHSqlDBDatabaseType {
   @Before
   public void setup() {
     databaseType = DatabaseType.Registry.findByIdentifier(HSqlDB.IDENTIFIER);
+
   }
 
 
@@ -53,7 +54,9 @@ public class TestHSqlDBDatabaseType {
    */
   @Test
   public void testFormatJdbcUrl() {
-    String suffix = ";DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE";
+ //   String suffix = ";DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE";
+ //TODO removed the H2 suffix
+    String suffix = "";
 
     assertEquals("jdbc:hsqldb:hsql://foo.com:123/mem:alfa" + suffix, databaseType.formatJdbcUrl(jdbcUrlElementBuilder().withHost("foo.com").withPort(123).withDatabaseName("alfa").build()));
     assertEquals("jdbc:hsqldb:hsql://foo.com/mem:alfa" + suffix, databaseType.formatJdbcUrl(jdbcUrlElementBuilder().withHost("foo.com").withDatabaseName("alfa").build()));
@@ -63,7 +66,9 @@ public class TestHSqlDBDatabaseType {
     assertEquals("jdbc:hsqldb:file:." + File.separator + "alfa" + suffix, databaseType.formatJdbcUrl(jdbcUrlElementBuilder().withInstanceName(".").withDatabaseName("alfa").build()));
     assertEquals("jdbc:hsqldb:file:bar" + File.separator + "alfa" + suffix, databaseType.formatJdbcUrl(jdbcUrlElementBuilder().withInstanceName("bar" + File.separator).withDatabaseName("alfa").build()));
 
-    assertEquals("jdbc:hsqldb:mem:data;DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE", databaseType.formatJdbcUrl(jdbcUrlElementBuilder().withHost("localhost").withDatabaseName("data").build()));
+    assertEquals("jdbc:hsqldb:mem:data"+suffix, databaseType.formatJdbcUrl(jdbcUrlElementBuilder().withHost("localhost").withDatabaseName("data").build()));
+
+
   }
 
 

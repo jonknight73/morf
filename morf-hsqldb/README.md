@@ -90,4 +90,42 @@ The first pass will just support in memory execution.  Which means the JDBC stri
 
 At this point we remember that we love TDD and embark on some unit tests. We start with `TestHSqlDBDatabaseType`. They all pass. Woo-hoo we have the major wiring in place. Then onto the trickier `TestHSqlDBDialect`.
 
-And is an unexpected twist all 240 tests passed. 
+And is an unexpected twist all 240 tests passed. Elapsed time including lots of notes 2 hours. 
+
+Of course it is using H2 Dialect - and we probably want to change that - but we have a minimum viable product! Ish.
+
+## morf-integration-test
+
+Next is the integration test.  First up we need to add `morf-hsqldb` to the `morf-integration-test` `pom.xml` file.
+```xml
+      <dependency>
+          <groupId>org.alfasoftware</groupId>
+          <artifactId>morf-hsqldb</artifactId>
+          <scope>runtime</scope>
+      </dependency>   
+```
+Next we start on `morf-integration-test/src/test/java/org/alfasoftware/morf/examples/TestStartHere.java`. Making the single line change:
+```java
+    connectionResources.setDatabaseType("HSQLDB");
+```
+
+After a brief delve into findbug issues (https://github.com/alfasoftware/morf/issues/130), it was time to `TestStartHere.java`.
+
+```
+java.lang.RuntimeException: Unable to get a connection to retrieve upgrade status.
+
+	at org.alfasoftware.morf.upgrade.UpgradeStatusTableServiceImpl.getStatus(UpgradeStatusTableServiceImpl.java:162)
+	at org.alfasoftware.morf.upgrade.UpgradeStatusTableServiceImpl.tidyUp(UpgradeStatusTableServiceImpl.java:192)
+	at org.alfasoftware.morf.upgrade.Deployment.deploySchema(Deployment.java:182)
+	at org.alfasoftware.morf.examples.TestStartHere.testStartHereFullExample(TestStartHere.java:101)
+
+Caused by: java.sql.SQLException: No suitable driver found for jdbc:hsqldb:mem:org.alfasoftware.morf.examples.TestStartHere;DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE
+```
+
+It was going so well. Still the options for JDBC were never going to play ball that nicely. 
+
+```
+jdbc:hsqldb:mem:org.alfasoftware.morf.examples.TestStartHere;DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE
+```
+
+This is parsed on `HSqlDB.java`
