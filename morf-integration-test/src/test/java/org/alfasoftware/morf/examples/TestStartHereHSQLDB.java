@@ -55,13 +55,14 @@ import org.junit.Test;
 
 import com.google.common.collect.FluentIterable;
 
+//TODO remove this class when HSQLDB production ready
 /**
- * Tests that the "Start Here" example at https://github.com/alfasoftware/morf/wiki/Start-Here
- * works correctly.
+ * Copy of the "Start Here" example at https://github.com/alfasoftware/morf/wiki/Start-Here
+ * modified to test HSQLDB. Used in initial development.
  *
  * @author Copyright (c) Alfa Financial Software Limited. 2018
  */
-public class TestStartHere {
+public class TestStartHereHSQLDB {
 
   /**
    * Tests the full example, checking that the result is correct.
@@ -91,9 +92,9 @@ public class TestStartHere {
 
     // And the database
     ConnectionResourcesBean connectionResources = new ConnectionResourcesBean();
-    connectionResources.setDatabaseType("H2");
+    connectionResources.setDatabaseType("HSQLDB");
     connectionResources.setHostName("localhost");
-    connectionResources.setDatabaseName(TestStartHere.class.getName());
+    connectionResources.setDatabaseName(TestStartHereHSQLDB.class.getName());
     connectionResources.setUserName("test");
     connectionResources.setPassword("test");
 

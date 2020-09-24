@@ -385,24 +385,6 @@ class HSqlDBDialect extends SqlDialect {
   }
 
 
-  /**
-   * It does explicit VARCHAR casting to avoid a HSQLDB 'feature' in which
-   * string literal values are effectively returned as CHAR (fixed width) data
-   * types rather than VARCHARs, where the length of the CHAR to hold the value
-   * is given by the maximum string length of any of the values that can be
-   * returned by the CASE statement.
-   *
-   * @see org.alfasoftware.morf.jdbc.SqlDialect#makeStringLiteral(java.lang.String)
-   */
-  @Override
-  protected String makeStringLiteral(String literalValue) {
-    if (StringUtils.isEmpty(literalValue)) {
-      return "NULL";
-    }
-
-    return String.format("CAST(%s AS VARCHAR(%d))", super.makeStringLiteral(literalValue), literalValue.length());
-  }
-
 
   /**
    * @see org.alfasoftware.morf.jdbc.SqlDialect#decorateTemporaryTableName(java.lang.String)
@@ -635,11 +617,6 @@ class HSqlDBDialect extends SqlDialect {
     return sqlBuilder.toString();
   }
 
-
-  @Override
-  protected String getSqlFrom(SqlParameter sqlParameter) {
-    return String.format("CAST(:%s AS %s)", sqlParameter.getMetadata().getName(), sqlRepresentationOfColumnType(sqlParameter.getMetadata(), false));
-  }
 
 
   /**

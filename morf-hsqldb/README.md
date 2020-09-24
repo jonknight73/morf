@@ -117,15 +117,60 @@ java.lang.RuntimeException: Unable to get a connection to retrieve upgrade statu
 	at org.alfasoftware.morf.upgrade.UpgradeStatusTableServiceImpl.getStatus(UpgradeStatusTableServiceImpl.java:162)
 	at org.alfasoftware.morf.upgrade.UpgradeStatusTableServiceImpl.tidyUp(UpgradeStatusTableServiceImpl.java:192)
 	at org.alfasoftware.morf.upgrade.Deployment.deploySchema(Deployment.java:182)
-	at org.alfasoftware.morf.examples.TestStartHere.testStartHereFullExample(TestStartHere.java:101)
+	at org.alfasoftware.morf.examples.TestStartHereHSQLDB.testStartHereFullExample(TestStartHere.java:101)
 
-Caused by: java.sql.SQLException: No suitable driver found for jdbc:hsqldb:mem:org.alfasoftware.morf.examples.TestStartHere;DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE
+Caused by: java.sql.SQLException: No suitable driver found for jdbc:hsqldb:mem:org.alfasoftware.morf.examples.TestStartHereHSQLDB;DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE
 ```
 
 It was going so well. Still the options for JDBC were never going to play ball that nicely. 
 
 ```
-jdbc:hsqldb:mem:org.alfasoftware.morf.examples.TestStartHere;DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE
+jdbc:hsqldb:mem:org.alfasoftware.morf.examples.TestStartHereHSQLDB;DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE
 ```
 
 This is parsed on `HSqlDB.java`
+
+A brief diversion now into `mvn clean compile`, which has thrown up some issues. JavaDoc errors have been fixed, but are outside the scope of this investigation.
+
+Temporarily `@Ignore` `TestStartHereHSqlDB` allows `mvn clean compile` to run successfully. Then run `mvn install`.
+
+Delete the `@Ignore` added above. And we got further. 
+```
+RuntimeSqlException: Error executing SQL [CREATE TABLE zzzUpgradeStatus (status VARCHAR(255) DEFAULT CAST('NONE' AS VARCHAR(4)) NOT NULL)]: Error code [-5581] SQL state [42581]
+```
+A pukka HSQLDB error message - in this case objecting to the `CAST` call.
+
+A quick exploration in a standalone HSQLDB instance suggests the statement should be:
+```sql
+CREATE TABLE zzzUpgradeStatus (status VARCHAR(255) DEFAULT 'NONE' NOT NULL)
+``` 
+
+So we had better fix that. Into `HSqlDBDialect`. Which is a lovely piece of code excision removing an H2 override function.
+
+```java
+  /**
+   * It does explicit VARCHAR casting to avoid a H2 'feature' in which
+   * string literal values are effectively returned as CHAR (fixed width) data
+   * types rather than VARCHARs, where the length of the CHAR to hold the value
+   * is given by the maximum string length of any of the values that can be
+   * returned by the CASE statement.
+   *
+   * @see org.alfasoftware.morf.jdbc.SqlDialect#makeStringLiteral(java.lang.String)
+   */
+  @Override
+  protected String makeStringLiteral(String literalValue) {
+    if (StringUtils.isEmpty(literalValue)) {
+      return "NULL";
+    }
+
+    return String.format("CAST(%s AS VARCHAR(%d))", super.makeStringLiteral(literalValue), literalValue.length());
+  }
+```
+
+```java
+
+  @Override
+  protected String getSqlFrom(SqlParameter sqlParameter) {
+    return String.format("CAST(:%s AS %s)", sqlParameter.getMetadata().getName(), sqlRepresentationOfColumnType(sqlParameter.getMetadata(), false));
+  }
+```

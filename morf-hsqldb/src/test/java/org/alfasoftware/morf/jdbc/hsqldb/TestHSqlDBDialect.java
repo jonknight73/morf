@@ -143,7 +143,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedParameterisedInsertStatement() {
-    return "INSERT INTO TESTSCHEMA.Test (id, version, stringField, intField, floatField, dateField, booleanField, charField, blobField, bigIntegerField, clobField) VALUES (5, CAST(:version AS INTEGER), CAST('Escap''d' AS VARCHAR(7)), 7, CAST(:floatField AS DECIMAL(13,2)), 20100405, 1, CAST(:charField AS VARCHAR(1)), CAST(:blobField AS LONGVARBINARY), CAST(:bigIntegerField AS BIGINT), CAST(:clobField AS NCLOB))";
+    return "INSERT INTO TESTSCHEMA.Test (id, version, stringField, intField, floatField, dateField, booleanField, charField, blobField, bigIntegerField, clobField) VALUES (5, :version, 'Escap''d', 7, :floatField, 20100405, 1, :charField, :blobField, :bigIntegerField, :clobField)";
   }
 
 
@@ -152,7 +152,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedParameterisedInsertStatementWithTableInDifferentSchema() {
-    return "INSERT INTO MYSCHEMA.Test (id, version, stringField, intField, floatField, dateField, booleanField, charField, blobField, bigIntegerField, clobField) VALUES (5, CAST(:version AS INTEGER), CAST('Escap''d' AS VARCHAR(7)), 7, CAST(:floatField AS DECIMAL(13,2)), 20100405, 1, CAST(:charField AS VARCHAR(1)), CAST(:blobField AS LONGVARBINARY), CAST(:bigIntegerField AS BIGINT), CAST(:clobField AS NCLOB))";
+    return "INSERT INTO MYSCHEMA.Test (id, version, stringField, intField, floatField, dateField, booleanField, charField, blobField, bigIntegerField, clobField) VALUES (5, :version, 'Escap''d', 7, :floatField, 20100405, 1, :charField, :blobField, :bigIntegerField, :clobField)";
   }
 
 
@@ -164,7 +164,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
     return Arrays.asList(
       "DELETE FROM TESTSCHEMA.idvalues where name = 'Test'",
       "INSERT INTO TESTSCHEMA.idvalues (name, value) VALUES('Test', (SELECT COALESCE(MAX(id) + 1, 1)  AS CurrentValue FROM TESTSCHEMA.Test))",
-      "INSERT INTO TESTSCHEMA.Test (version, stringField, id) SELECT version, stringField, (SELECT COALESCE(value, 0)  FROM TESTSCHEMA.idvalues WHERE (name = CAST('Test' AS VARCHAR(4)))) + Other.id FROM TESTSCHEMA.Other"
+      "INSERT INTO TESTSCHEMA.Test (version, stringField, id) SELECT version, stringField, (SELECT COALESCE(value, 0)  FROM TESTSCHEMA.idvalues WHERE (name = 'Test')) + Other.id FROM TESTSCHEMA.Other"
     );
   }
 
@@ -177,7 +177,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
     return Arrays.asList(
       "DELETE FROM TESTSCHEMA.idvalues where name = 'Test'",
       "INSERT INTO TESTSCHEMA.idvalues (name, value) VALUES('Test', (SELECT COALESCE(MAX(id) + 1, 1)  AS CurrentValue FROM TESTSCHEMA.Test))",
-      "INSERT INTO TESTSCHEMA.Test (stringField, id, version) SELECT stringField, (SELECT COALESCE(value, 0)  FROM TESTSCHEMA.idvalues WHERE (name = CAST('Test' AS VARCHAR(4)))) + Other.id, 0 AS version FROM TESTSCHEMA.Other"
+      "INSERT INTO TESTSCHEMA.Test (stringField, id, version) SELECT stringField, (SELECT COALESCE(value, 0)  FROM TESTSCHEMA.idvalues WHERE (name = 'Test')) + Other.id, 0 AS version FROM TESTSCHEMA.Other"
     );
   }
 
@@ -190,7 +190,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
     return Arrays.asList(
       "DELETE FROM TESTSCHEMA.idvalues where name = 'Test'",
       "INSERT INTO TESTSCHEMA.idvalues (name, value) VALUES('Test', (SELECT COALESCE(MAX(id) + 1, 1)  AS CurrentValue FROM TESTSCHEMA.Test))",
-      "INSERT INTO TESTSCHEMA.Test (stringField, intField, floatField, dateField, booleanField, charField, id, version, blobField, bigIntegerField, clobField) VALUES (CAST('Escap''d' AS VARCHAR(7)), 7, 11.25, 20100405, 1, CAST('X' AS VARCHAR(1)), (SELECT COALESCE(value, 1)  FROM TESTSCHEMA.idvalues WHERE (name = CAST('Test' AS VARCHAR(4)))), 0, null, 12345, null)"
+      "INSERT INTO TESTSCHEMA.Test (stringField, intField, floatField, dateField, booleanField, charField, id, version, blobField, bigIntegerField, clobField) VALUES ('Escap''d', 7, 11.25, 20100405, 1, 'X', (SELECT COALESCE(value, 1)  FROM TESTSCHEMA.idvalues WHERE (name = 'Test')), 0, null, 12345, null)"
     );
   }
 
@@ -203,7 +203,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
     return Arrays.asList(
       "DELETE FROM TESTSCHEMA.idvalues where name = 'Test'",
       "INSERT INTO TESTSCHEMA.idvalues (name, value) VALUES('Test', (SELECT COALESCE(MAX(id) + 1, 1)  AS CurrentValue FROM MYSCHEMA.Test))",
-      "INSERT INTO MYSCHEMA.Test (stringField, intField, floatField, dateField, booleanField, charField, id, version, blobField, bigIntegerField, clobField) VALUES (CAST('Escap''d' AS VARCHAR(7)), 7, 11.25, 20100405, 1, CAST('X' AS VARCHAR(1)), (SELECT COALESCE(value, 1)  FROM TESTSCHEMA.idvalues WHERE (name = CAST('Test' AS VARCHAR(4)))), 0, null, 12345, null)"
+      "INSERT INTO MYSCHEMA.Test (stringField, intField, floatField, dateField, booleanField, charField, id, version, blobField, bigIntegerField, clobField) VALUES ('Escap''d', 7, 11.25, 20100405, 1, 'X', (SELECT COALESCE(value, 1)  FROM TESTSCHEMA.idvalues WHERE (name = 'Test')), 0, null, 12345, null)"
     );
   }
 
@@ -213,7 +213,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedParameterisedInsertStatementWithNoColumnValues() {
-    return "INSERT INTO TESTSCHEMA.Test (id, version, stringField, intField, floatField, dateField, booleanField, charField, blobField, bigIntegerField, clobField) VALUES (CAST(:id AS BIGINT), CAST(:version AS INTEGER), CAST(:stringField AS VARCHAR(3)), CAST(:intField AS INTEGER), CAST(:floatField AS DECIMAL(13,2)), CAST(:dateField AS DATE), CAST(:booleanField AS BIT), CAST(:charField AS VARCHAR(1)), CAST(:blobField AS LONGVARBINARY), CAST(:bigIntegerField AS BIGINT), CAST(:clobField AS NCLOB))";
+    return "INSERT INTO TESTSCHEMA.Test (id, version, stringField, intField, floatField, dateField, booleanField, charField, blobField, bigIntegerField, clobField) VALUES (:id, :version, :stringField, :intField, :floatField, :dateField, :booleanField, :charField, :blobField, :bigIntegerField, :clobField)";
   }
 
 
@@ -222,7 +222,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedEmptyStringInsertStatement() {
-    return "INSERT INTO TESTSCHEMA.Test (stringField, id, version, intField, floatField, dateField, booleanField, charField, blobField, bigIntegerField, clobField) VALUES (NULL, (SELECT COALESCE(value, 1)  FROM TESTSCHEMA.idvalues WHERE (name = CAST('Test' AS VARCHAR(4)))), 0, 0, 0, null, 0, NULL, null, 12345, null)";
+    return "INSERT INTO TESTSCHEMA.Test (stringField, id, version, intField, floatField, dateField, booleanField, charField, blobField, bigIntegerField, clobField) VALUES (NULL, (SELECT COALESCE(value, 1)  FROM TESTSCHEMA.idvalues WHERE (name = 'Test')), 0, 0, 0, null, 0, NULL, null, 12345, null)";
   }
 
 
@@ -231,7 +231,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedConcatenationWithCase() {
-    return "SELECT COALESCE(assetDescriptionLine1,'') || COALESCE(CASE WHEN (taxVariationIndicator = CAST('Y' AS VARCHAR(1))) THEN exposureCustomerNumber ELSE invoicingCustomerNumber END,'') AS test FROM TESTSCHEMA.schedule";
+    return "SELECT COALESCE(assetDescriptionLine1,'') || COALESCE(CASE WHEN (taxVariationIndicator = 'Y') THEN exposureCustomerNumber ELSE invoicingCustomerNumber END,'') AS test FROM TESTSCHEMA.schedule";
   }
 
 
@@ -249,7 +249,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedConcatenationWithMultipleFieldLiterals() {
-    return "SELECT COALESCE(CAST('ABC' AS VARCHAR(3)),'') || COALESCE(CAST(' ' AS VARCHAR(1)),'') || COALESCE(CAST('DEF' AS VARCHAR(3)),'') AS assetDescription FROM TESTSCHEMA.schedule";
+    return "SELECT COALESCE('ABC','') || COALESCE(' ','') || COALESCE('DEF','') AS assetDescription FROM TESTSCHEMA.schedule";
   }
 
 
@@ -258,7 +258,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedNestedConcatenations() {
-    return "SELECT COALESCE(field1,'') || COALESCE(COALESCE(field2,'') || COALESCE(CAST('XYZ' AS VARCHAR(3)),''),'') AS test FROM TESTSCHEMA.schedule";
+    return "SELECT COALESCE(field1,'') || COALESCE(COALESCE(field2,'') || COALESCE('XYZ',''),'') AS test FROM TESTSCHEMA.schedule";
   }
 
 
@@ -267,7 +267,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedSelectWithConcatenation1() {
-    return "SELECT COALESCE(assetDescriptionLine1,'') || COALESCE(CAST(' ' AS VARCHAR(1)),'') || COALESCE(assetDescriptionLine2,'') AS assetDescription FROM TESTSCHEMA.schedule";
+    return "SELECT COALESCE(assetDescriptionLine1,'') || COALESCE(' ','') || COALESCE(assetDescriptionLine2,'') AS assetDescription FROM TESTSCHEMA.schedule";
   }
 
 
@@ -276,7 +276,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedSelectWithConcatenation2() {
-    return "SELECT COALESCE(assetDescriptionLine1,'') || COALESCE(CAST('XYZ' AS VARCHAR(3)),'') || COALESCE(assetDescriptionLine2,'') AS assetDescription FROM TESTSCHEMA.schedule";
+    return "SELECT COALESCE(assetDescriptionLine1,'') || COALESCE('XYZ','') || COALESCE(assetDescriptionLine2,'') AS assetDescription FROM TESTSCHEMA.schedule";
   }
 
 
@@ -285,7 +285,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedIsNull() {
-    return "COALESCE(CAST('A' AS VARCHAR(1)), CAST('B' AS VARCHAR(1))) ";
+    return "COALESCE('A', 'B') ";
   }
 
 
@@ -323,7 +323,6 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
   protected String expectedMathsMultiply() {
     return "1 * 1";
   }
-
 
   /**
    * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedStringCast()
@@ -388,6 +387,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
   }
 
 
+
   /**
    * {@inheritDoc}
    *
@@ -404,7 +404,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedLeftPad() {
-    return "SELECT LPAD(stringField, 10, CAST('j' AS VARCHAR(1))) FROM TESTSCHEMA.Test";
+    return "SELECT LPAD(stringField, 10, 'j') FROM TESTSCHEMA.Test";
   }
 
 
@@ -717,7 +717,8 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String varCharCast(String value) {
-    return String.format("CAST(%s AS VARCHAR(%d))", value, StringUtils.replace(value, "'", "").length());
+    // return String.format("CAST(%s AS VARCHAR(%d))", value, StringUtils.replace(value, "'", "").length());
+    return value;
   }
 
 
@@ -726,7 +727,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected List<String> expectedAlterTableAddStringColumnWithDefaultStatement() {
-    return Arrays.asList("ALTER TABLE TESTSCHEMA.Test ADD COLUMN stringField_with_default VARCHAR(6) DEFAULT CAST('N' AS VARCHAR(1)) NOT NULL");
+    return Arrays.asList("ALTER TABLE TESTSCHEMA.Test ADD COLUMN stringField_with_default VARCHAR(6) DEFAULT 'N' NOT NULL");
   }
 
 
@@ -776,7 +777,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedYYYYMMDDToDate() {
-    return "CAST(SUBSTRING(CAST('20100101' AS VARCHAR(8)), 1, 4)||'-'||SUBSTRING(CAST('20100101' AS VARCHAR(8)), 5, 2)||'-'||SUBSTRING(CAST('20100101' AS VARCHAR(8)), 7, 2) AS DATE)";
+    return "CAST(SUBSTRING('20100101', 1, 4)||'-'||SUBSTRING('20100101', 5, 2)||'-'||SUBSTRING('20100101', 7, 2) AS DATE)";
   }
 
 
@@ -1072,7 +1073,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedSelectLiteralWithWhereClauseString() {
-    return "SELECT CAST('LITERAL' AS VARCHAR(7)) FROM dual WHERE (CAST('ONE' AS VARCHAR(3)) = CAST('ONE' AS VARCHAR(3)))";
+    return "SELECT 'LITERAL' FROM dual WHERE ('ONE' = 'ONE')";
   }
 
 
