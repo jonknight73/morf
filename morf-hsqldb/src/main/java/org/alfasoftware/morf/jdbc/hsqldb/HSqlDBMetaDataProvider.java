@@ -40,13 +40,14 @@ class HSqlDBMetaDataProvider extends DatabaseMetaDataProvider {
 
 
   /**
-   * H2 reports its primary key indexes as PRIMARY_KEY_49 or similar.
+   * HSqlDB reports its primary key indexes as containing _PK_
    *
    * @see org.alfasoftware.morf.jdbc.DatabaseMetaDataProvider#isPrimaryKeyIndex(java.lang.String)
    */
   @Override
   protected boolean isPrimaryKeyIndex(RealName indexName) {
-    return indexName.getDbName().startsWith("PRIMARY_KEY");
+    return indexName.getDbName().contains("_PK_");
+           // startsWith("PRIMARY_KEY");
   }
 
 
