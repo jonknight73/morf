@@ -51,7 +51,7 @@ import com.google.inject.assistedinject.Assisted;
  * at this point (for example, transferring in a start position using
  * {@link DatabaseDataSetConsumer}) and, once complete, call {@link UpgradeStatusTableService#writeStatusFromStatus(UpgradeStatus, UpgradeStatus)}.
  *
- * <h3>Usage</h3>
+ * <h2>Usage</h2>
  * <pre><code>
  * deployment.deploy(targetSchema);
  * if (upgradeStatusTableService.writeStatusFromStatus(DATA_TRANSFER_REQUIRED, DATA_TRANSFER_IN_PROGRESS) == 1) {

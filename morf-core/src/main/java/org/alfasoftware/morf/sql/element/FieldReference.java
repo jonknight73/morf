@@ -31,14 +31,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * has no concept of the type or representation of a field, only its name, alias and
  * the table on which it exists.
  *
- * <h3>Examples of use:</h3>
+ * <h2>Examples of use:</h2>
  *
  * <p>Create a field with a given name:</p>
  * <blockquote><pre>
  *    AliasedField newField = field("agreementnumber").build();</pre></blockquote>
  *
  * <p>Create a field with a given name and alias of "bob". This is equivalent to "agreementnumber AS bob" in SQL:</p>
- * <blockquote><pre>
+ * <blockquote><pre>git
  *    AliasedField newField = field("agreementnumber", "bob").build();</pre></blockquote>
  *
  * <p>Create a field which is sorted descending:</p>
