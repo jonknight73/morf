@@ -780,7 +780,10 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedYYYYMMDDToDate() {
-    return "CAST(SUBSTRING('20100101', 1, 4)||'-'||SUBSTRING('20100101', 5, 2)||'-'||SUBSTRING('20100101', 7, 2) AS DATE)";
+    return "CAST(TO_DATE('20100101', 'YYYYMMDD') as DATE)";
+
+    //TODO this test should have different month and day numbers
+    //    return "CAST(SUBSTRING('20100101', 1, 4)||'-'||SUBSTRING('20100101', 5, 2)||'-'||SUBSTRING('20100101', 7, 2) AS DATE)";
   }
 
 
@@ -789,7 +792,8 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedDateToYyyymmdd() {
-    return "CAST(SUBSTRING(testField, 1, 4)||SUBSTRING(testField, 6, 2)||SUBSTRING(testField, 9, 2) AS DECIMAL(8))";
+    return "CAST(TO_CHAR(testField,'YYYYMMDD') as DECIMAL(8))";
+    // return "CAST(SUBSTRING(testField, 1, 4)||SUBSTRING(testField, 6, 2)||SUBSTRING(testField, 9, 2) AS DECIMAL(8))";
   }
 
 
@@ -798,7 +802,8 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedDateToYyyymmddHHmmss() {
-    return "CAST(SUBSTRING(testField, 1, 4)||SUBSTRING(testField, 6, 2)||SUBSTRING(testField, 9, 2)||SUBSTRING(testField, 12, 2)||SUBSTRING(testField, 15, 2)||SUBSTRING(testField, 18, 2) AS DECIMAL(14))";
+    return "CAST(TO_CHAR(testField,'YYYYMMDDHH24MISS') as DECIMAL(14))";
+    // return "CAST(SUBSTRING(testField, 1, 4)||SUBSTRING(testField, 6, 2)||SUBSTRING(testField, 9, 2)||SUBSTRING(testField, 12, 2)||SUBSTRING(testField, 15, 2)||SUBSTRING(testField, 18, 2) AS DECIMAL(14))";
   }
 
 
@@ -807,7 +812,7 @@ public class TestHSqlDBDialect extends AbstractSqlDialectTest {
    */
   @Override
   protected String expectedNow() {
-    return "CURRENT_TIMESTAMP()";
+    return "CURRENT_TIMESTAMP";
   }
 
 
