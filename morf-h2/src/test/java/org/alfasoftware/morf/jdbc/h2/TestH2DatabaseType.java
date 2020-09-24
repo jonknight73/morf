@@ -63,7 +63,7 @@ public class TestH2DatabaseType {
     assertEquals("jdbc:h2:file:." + File.separator + "alfa" + suffix, databaseType.formatJdbcUrl(jdbcUrlElementBuilder().withInstanceName(".").withDatabaseName("alfa").build()));
     assertEquals("jdbc:h2:file:bar" + File.separator + "alfa" + suffix, databaseType.formatJdbcUrl(jdbcUrlElementBuilder().withInstanceName("bar" + File.separator).withDatabaseName("alfa").build()));
 
-    assertEquals("jdbc:h2:mem:data;DB_CLOSE_DELAY=-1;DEFAULT_LOCK_TIMEOUT=60000;LOB_TIMEOUT=2000;MV_STORE=TRUE", databaseType.formatJdbcUrl(jdbcUrlElementBuilder().withHost("localhost").withDatabaseName("data").build()));
+    assertEquals("jdbc:h2:mem:data"+suffix, databaseType.formatJdbcUrl(jdbcUrlElementBuilder().withHost("localhost").withDatabaseName("data").build()));
   }
 
 
