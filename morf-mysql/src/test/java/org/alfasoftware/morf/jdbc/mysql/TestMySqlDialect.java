@@ -896,6 +896,16 @@ public class TestMySqlDialect extends AbstractSqlDialectTest {
     return Arrays.asList("DROP VIEW IF EXISTS `" + tableName("TestView") + "`") ;
   }
 
+  @Override
+  protected List<String> expectedDropViewCascadeStatements() {
+    return Arrays.asList("DROP VIEW IF EXISTS `" + tableName("TestView") + "`") ;
+  }
+
+  @Override
+  protected List<String> expectedDropViewRestrictStatements() {
+    return Arrays.asList("DROP VIEW IF EXISTS `" + tableName("TestView") + "`") ;
+  }
+
 
   /**
    * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedSubstring()

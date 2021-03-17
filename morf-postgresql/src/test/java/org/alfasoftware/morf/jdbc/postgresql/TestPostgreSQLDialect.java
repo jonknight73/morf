@@ -877,6 +877,15 @@ public class TestPostgreSQLDialect extends AbstractSqlDialectTest {
 
 
   /**
+   * @see AbstractSqlDialectTest#expectedViewRedeploymentStatements()
+   */
+  @Override
+  protected List<String> expectedViewRedeploymentStatements() {
+    return Arrays.asList("CREATE OR REPLACE VIEW " + tableName("TestView") + " AS (SELECT stringField FROM " + tableName("Test") + " WHERE (stringField = 'blah'))",
+            "COMMENT ON VIEW TestView IS 'REALNAME:[TestView]'");
+  }
+
+  /**
    * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedYYYYMMDDToDate()
    */
   @Override
@@ -913,13 +922,29 @@ public class TestPostgreSQLDialect extends AbstractSqlDialectTest {
 
 
   /**
-   * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedDropViewStatement()
+   * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedDropViewStatements()
    */
   @Override
   protected List<String> expectedDropViewStatements() {
     return Arrays.asList("DROP VIEW IF EXISTS " + tableName("TestView") + " CASCADE");
   }
 
+
+  /**
+   * @see AbstractSqlDialectTest#expectedDropViewCascadeStatements()
+   * */
+  @Override
+  protected List<String> expectedDropViewCascadeStatements() {
+    return expectedDropViewStatements();
+  }
+
+  /**
+   * @see AbstractSqlDialectTest#expectedDropViewRestrictStatements()
+   */
+  @Override
+  protected List<String> expectedDropViewRestrictStatements() {
+    return expectedDropViewStatements();
+  }
 
   /**
    * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedStringLiteralToIntegerCast()

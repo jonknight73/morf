@@ -1119,13 +1119,28 @@ public class TestOracleDialect extends AbstractSqlDialectTest {
 
 
   /**
-   * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedDropViewStatement()
+   * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedDropViewStatements()
    */
   @Override
   protected List<String> expectedDropViewStatements() {
     return Arrays.asList("BEGIN FOR i IN (SELECT null FROM all_views WHERE OWNER='TESTSCHEMA' AND VIEW_NAME='TESTVIEW') LOOP EXECUTE IMMEDIATE 'DROP VIEW " + tableName("TestView") + "'; END LOOP; END;");
   }
 
+  /**
+   * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedDropViewCascadeStatements()
+   */
+  @Override
+  protected List<String> expectedDropViewCascadeStatements() {
+    return expectedDropViewStatements();
+  }
+
+  /**
+   * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedDropViewRestrictStatements()
+   */
+  @Override
+  protected List<String> expectedDropViewRestrictStatements() {
+    return expectedDropViewStatements();
+  }
 
   /**
    * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedSubstring()

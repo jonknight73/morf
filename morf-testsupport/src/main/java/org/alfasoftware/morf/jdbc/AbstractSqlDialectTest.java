@@ -113,6 +113,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.alfasoftware.morf.dataset.Record;
 import org.alfasoftware.morf.metadata.Column;
@@ -590,6 +592,40 @@ public abstract class AbstractSqlDialectTest {
       expectedDropViewStatements(),
       testDialect.dropStatements(testView));
   }
+
+  /**
+   * Tests SQL for dropping a view with Cascade options.
+   */
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testDropViewCascadeStatements() {
+    compareStatements(
+            expectedDropViewCascadeStatements(),
+            testDialect.dropStatements(testView, true));
+  }
+
+  /**
+   * Tests SQL for dropping a view with restrict options.
+   */
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testDropViewRestrictStatements() {
+    compareStatements(
+            expectedDropViewRestrictStatements(),
+            testDialect.dropStatements(testView, false));
+  }
+
+  /**
+   * Tests SQL for redeploying a view.
+   */
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testViewRedeploymentStatements() {
+    compareStatements(
+            expectedViewRedeploymentStatements(),
+            testDialect.viewRedeploymentStatements(testView));
+  }
+
 
 
   /**
@@ -4757,6 +4793,31 @@ public abstract class AbstractSqlDialectTest {
    */
   protected abstract List<String> expectedDropViewStatements();
 
+  /**
+   * @return The expected SQL statements for dropping the test database view with a CASCADE parameter.
+   */
+  protected List<String> expectedDropViewCascadeStatements(){
+     return expectedDropViewStatements();
+  };
+
+  /**
+   * @return The expected SQL statements for dropping the test database view with a RESTRICT parameter.
+   */
+  protected List<String> expectedDropViewRestrictStatements(){
+    return expectedDropViewStatements();
+  }
+
+  /**
+   * Defaults to dropping and recreating the view.
+   *
+   * @return The expected SQL statements for recreating the test database view.
+   */
+  protected List<String> expectedViewRedeploymentStatements() {
+       return Stream.concat(
+              expectedDropViewRestrictStatements().stream(),
+              expectedCreateViewStatements().stream())
+              .collect(Collectors.toList());
+  };
 
   /**
    * @return The expected SQL statements for dropping the temporary test

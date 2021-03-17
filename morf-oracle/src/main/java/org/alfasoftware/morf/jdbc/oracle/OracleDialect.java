@@ -371,7 +371,8 @@ class OracleDialect extends SqlDialect {
    * @see org.alfasoftware.morf.jdbc.SqlDialect#dropStatements(org.alfasoftware.morf.metadata.View)
    */
   @Override
-  public Collection<String> dropStatements(View view) {
+  public Collection<String> dropStatements(View view, boolean cascade) {
+    // Ignore the CASCADE parameter as Oracle does not honour it properly
     return Arrays.asList("BEGIN FOR i IN (SELECT null FROM all_views WHERE OWNER='" + getSchemaName().toUpperCase() + "' AND VIEW_NAME='" + view.getName().toUpperCase() + "') LOOP EXECUTE IMMEDIATE 'DROP VIEW " + schemaNamePrefix() + view.getName() + "'; END LOOP; END;");
   }
 

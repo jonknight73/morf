@@ -815,6 +815,16 @@ public class TestH2Dialect extends AbstractSqlDialectTest {
     return Arrays.asList("DROP VIEW " + tableName("TestView") + " IF EXISTS CASCADE");
   }
 
+  @Override
+  protected List<String> expectedDropViewCascadeStatements() {
+    return Arrays.asList("DROP VIEW " + tableName("TestView") + " IF EXISTS CASCADE");
+  }
+
+  @Override
+  protected List<String> expectedDropViewRestrictStatements() {
+    return Arrays.asList("DROP VIEW " + tableName("TestView") + " IF EXISTS");
+  }
+
 
   /**
    * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedStringLiteralToIntegerCast()

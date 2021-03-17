@@ -223,8 +223,10 @@ class SqlServerDialect extends SqlDialect {
    * @see org.alfasoftware.morf.jdbc.SqlDialect#dropStatements(org.alfasoftware.morf.metadata.View)
    */
   @Override
-  public Collection<String> dropStatements(View view) {
+  public Collection<String> dropStatements(View view, boolean cascade) {
     List<String> statements = new ArrayList<>();
+
+    //TODO decide what to do with Cascade
 
     StringBuilder createTableStatement = new StringBuilder();
     createTableStatement.append(String.format("IF EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'%s%s'))",
@@ -515,7 +517,7 @@ class SqlServerDialect extends SqlDialect {
 
     // If we are removing the autonumber then we must completely rebuild the table
     // without the autonumber (identity) property before we do anything else
-    // PLEASE NOTE - THIS DOES NOT COPY VIEWS OR INDEXES -- See WEB-23759
+    // PLEASE NOTE - THIS DOES NOT COPY VIEWS OR INDEXES -- See WEB-23759 //TODO Remove this reference
     if (oldColumn.isAutoNumbered() && !newColumn.isAutoNumbered()) {
       // Create clone of table
       Table clone = table(table.getName() + "Clone")

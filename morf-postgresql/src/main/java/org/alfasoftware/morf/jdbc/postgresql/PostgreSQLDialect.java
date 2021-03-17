@@ -270,13 +270,26 @@ class PostgreSQLDialect extends SqlDialect {
 
 
   @Override
-  public Collection<String> viewDeploymentStatements(View view) {
+  public Collection<String> viewDeploymentStatements(View view, boolean replace) {
     return ImmutableList.<String>builder()
-        .addAll(super.viewDeploymentStatements(view))
+        .addAll(super.viewDeploymentStatements(view, replace))
         .add(addViewComment(view.getName()))
         .build();
   }
 
+
+  /**
+   * Creates the SQL to drop and redploy a view. Defaults to drop and recreate the view, but can be
+   * implemented as ALTER VIEW. This may avoid cascade issues in Postgres
+   *
+   * @param view The view to redeploy
+   * @return The SQL statements as strings
+   */
+  @Override
+  public Collection<String> viewRedeploymentStatements(View view) {
+    // Use CREATE OR REPLACE
+    return viewDeploymentStatements(view, true);
+  }
 
   private String addViewComment(String viewName) {
     return "COMMENT ON VIEW " + viewName + " IS 'REALNAME:[" + viewName + "]'";
@@ -290,8 +303,12 @@ class PostgreSQLDialect extends SqlDialect {
 
 
   @Override
-  public Collection<String> dropStatements(View view) {
-    return ImmutableList.of("DROP VIEW IF EXISTS " + schemaNamePrefix() + view.getName() + " CASCADE");
+  public Collection<String> dropStatements(View view, boolean cascade) {
+    // NB Postgres always drops views with CASCADE whether it is specified or not
+//    String cascadeParameter = cascade?" CASCADE":"";
+    String cascadeParameter = " CASCADE";
+
+    return ImmutableList.of("DROP VIEW IF EXISTS " + schemaNamePrefix() + view.getName() + cascadeParameter);
   }
 
 

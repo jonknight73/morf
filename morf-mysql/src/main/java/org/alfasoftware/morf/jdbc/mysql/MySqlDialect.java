@@ -282,13 +282,14 @@ class MySqlDialect extends SqlDialect {
   /**
    * @see org.alfasoftware.morf.jdbc.SqlDialect#dropStatements(org.alfasoftware.morf.metadata.View)
    */
-  @Override
-  public Collection<String> dropStatements(View view) {
-    return Arrays.asList("DROP VIEW IF EXISTS `" + view.getName() + "`");
-  }
 
+    @Override
+    public Collection<String> dropStatements(View view, boolean cascade) {
+        // MySQL always drops with a restrict option, so there is no point adding CASCADE which will be ignored
+        return Arrays.asList("DROP VIEW IF EXISTS `" + view.getName() + "`");
+    }
 
-  /**
+    /**
    * @see org.alfasoftware.morf.jdbc.SqlDialect#postInsertWithPresetAutonumStatements(org.alfasoftware.morf.metadata.Table, boolean)
    */
   @Override

@@ -1137,13 +1137,28 @@ public class TestNuoDBDialect extends AbstractSqlDialectTest {
 
 
   /**
-   * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedDropViewStatement()
+   * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedDropViewStatements()
    */
   @Override
   protected List<String> expectedDropViewStatements() {
     return Arrays.asList("DROP VIEW " + tableName("TestView") + " IF EXISTS CASCADE") ;
   }
 
+  /**
+   * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedDropViewCascadeStatements()
+   */
+  @Override
+  protected List<String> expectedDropViewCascadeStatements() {
+    return expectedDropViewStatements();
+  }
+
+  /**
+   * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedDropViewRestrictStatements()
+   */
+  @Override
+  protected List<String> expectedDropViewRestrictStatements() {
+    return Arrays.asList("DROP VIEW " + tableName("TestView") + " IF EXISTS") ;
+  }
 
   /**
    * @see org.alfasoftware.morf.jdbc.AbstractSqlDialectTest#expectedSubstring()

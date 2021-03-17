@@ -42,6 +42,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.alfasoftware.morf.dataset.Record;
 import org.alfasoftware.morf.metadata.Column;
@@ -189,17 +190,29 @@ public abstract class SqlDialect {
 
 
   /**
-   * Creates SQL to deploy a database view.
+   * Creates SQL to deploy a database view without OR REPLACE keywords
    *
    * @param view The meta data for the view to deploy.
    * @return The statements required to deploy the view.
    */
   public Collection<String> viewDeploymentStatements(View view) {
+    return viewDeploymentStatements(view, false);
+  }
+
+    /**
+     * Creates SQL to deploy a database view.
+     *
+     * @param view The meta data for the view to deploy.
+     * @return The statements required to deploy the view.
+     */
+  public Collection<String> viewDeploymentStatements(View view, boolean replace) {
     List<String> statements = new ArrayList<>();
+
 
     // Create the table deployment statement
     StringBuilder createTableStatement = new StringBuilder();
     createTableStatement.append("CREATE ");
+    if (replace) { createTableStatement.append("OR REPLACE ");}
     createTableStatement.append("VIEW ");
     createTableStatement.append(schemaNamePrefix());
     createTableStatement.append(view.getName());
@@ -739,13 +752,41 @@ public abstract class SqlDialect {
 
 
   /**
-   * Creates SQL to drop the named view.
+   * Creates SQL to drop the named view. Wrapper for dropStatements(view, true).
    *
    * @param view The view to drop
    * @return The SQL statements as strings.
    */
   public Collection<String> dropStatements(View view) {
-    return ImmutableList.of("DROP VIEW " + schemaNamePrefix() + view.getName() + " IF EXISTS CASCADE");
+    return dropStatements(view, true);
+  }
+
+
+  /**
+   * Creates SQL to drop the named view.
+   *
+   * @param view The view to drop
+   * @param cascade Whether to drop the view with a cascade option
+   * @return The SQL statements as strings.
+   */
+  public Collection<String> dropStatements(View view, boolean cascade) {
+    String cascadeParameter = cascade?" CASCADE":"";
+    return ImmutableList.of("DROP VIEW " + schemaNamePrefix() + view.getName() + " IF EXISTS" + cascadeParameter);
+  }
+
+
+  /**
+   * Creates the SQL to drop and redploy a view. Defaults to drop and recreate the view, but can be
+   * implemented as ALTER VIEW. This may avoid cascade issues in Postgres
+   *
+   * @param view The view to redeploy
+   * @return The SQL statements as strings
+   */
+  public Collection<String> viewRedeploymentStatements(View view) {
+      return Stream.concat(
+              dropStatements(view, false).stream(),
+              viewDeploymentStatements(view).stream())
+              .collect(Collectors.toList());
   }
 
 
